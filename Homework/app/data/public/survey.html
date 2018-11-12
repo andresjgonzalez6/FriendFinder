@@ -227,60 +227,35 @@
         crossorigin="anonymous"></script>
 </body>
 
-<script type="text/javascript">
-
-    $("#submit").on("click", function (event) {
-        console.log("BUTTON PRESSED");
-        event.preventDefault();
-
-        // Here we grab the form elements
-        var newFriend = {
-            name: $("#name").val().trim(),
-            photo: $("#image").val().trim(),
-            scores: [
-                $("#q1").val(),
-                $("#q2").val(),
-                $("#q3").val(),
-                $("#q4").val(),
-                $("#q5").val(),
-                $("#q6").val(),
-                $("#q7").val(),
-                $("#q8").val(),
-                $("#q9").val(),
-                $("#q10").val()
-            ]
-        };
-
-        $.post("/api/friends", newFriend,
-            function (data) {
-
-                if (data) {
-                    console.log("You've been added to the Friend List!");
-                }
-
-                else {
-                    console.log("Error: Something went wrong. You weren't added to the Friend List.");
-                }
-
-                // Clear the form when submitting
-                name: $("#name").val("");
-                image: $("#image").val("");
-                q1: $("#q1").val("");
-                q2: $("#q2").val("");
-                q3: $("#q3").val("");
-                q4: $("#q4").val("");
-                q5: $("#q5").val("");
-                q6: $("#q6").val("");
-                q7: $("#q7").val("");
-                q8: $("#q8").val("");
-                q9: $("#q9").val("");
-                q10: $("#q10").val("");
-
-            });
-
-    });
-
-</script>
+<script>
+        $(document).ready(function () {
+            $('#submit').on('click', (e) => {
+                e.preventDefault();
+                let name = $('#name').val();
+                let pic = $('#image').val();
+                let q = [];
+                let selects = $('option:selected');
+                selects.each((index, elem) => {
+                    q.push(elem.innerHTML);
+                })
+                $.ajax({
+                    method: 'POST',
+                    url: './api/',
+                    data: {
+                        name,
+                        pic,
+                        q
+                    },
+                    dataType: 'jsonp'
+                }).then((response) => {
+                    response = JSON.parse(response);
+                    $('#match-name').text(response.name);
+                    $('#match-image').attr('src', response.pic);
+                    $('#match-btn').click();
+                })
+            })
+        })
+    </script>
 
 
 </html>
