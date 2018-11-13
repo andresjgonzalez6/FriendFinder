@@ -1,17 +1,29 @@
-const express = require("express");
+// Local server. 
+const express = require('express');
+const app = express();
+const path = require('path');
 
-var app = express();
+// File pathways.
+const apiRouter = require('./app/routing/apiRoutes');
+const htmlRouter = require('./app/routing/htmlRoutes');
 
-var PORT = process.env.PORT || 8081;  
+const bodyParser = require('body-parser');
+const exphbs = require('express-handlebars');
 
-app.use(express.urlencoded({extended: true}));
-app.use(express.json());
+const port = process.env.PORT || 8083;
 
-require("./app/routing/apiRoutes")(app);
-require("./app/routing/htmlRoutes")(app);
+//For handlebars
+app.set('views', path.join(__dirname, '/app/data/public'));
+app.engine('handlebars', exphbs({layoutsDir: path.join(__dirname, '/app/data/public')}));
+app.set('view engine', 'handlebars');
 
-app.listen(PORT, function() {
-    console.log("App listening on PORT: " + PORT);
-  });
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
-module.exports = app;
+//For file pathways
+app.use('/api', apiRouter);
+app.use('/', htmlRouter);
+app.use('*', htmlRouter);
+
+
+app.listen(port, () => console.log(`Listenting on port ${port}`));
